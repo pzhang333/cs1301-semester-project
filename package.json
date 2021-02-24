@@ -1,0 +1,15 @@
+{
+  "name": "cs1301-semester-project",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pzhang333/cs1301-semester-project.git"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "tmi.js": "^1.7.1"
+  }
+}
