@@ -1,7 +1,7 @@
 const banned = new Set(["fuck", "test", "trump"])
 
-function basic_matching(string) {
-  if (banned.has(string)) {
+function basic_matching(word) {
+  if (banned.has(word)) {
     return true;
   }
   return false;
@@ -28,8 +28,8 @@ function build_table_kmp(word) {
   return T;
 }
 
-function kmp_search(string) {
-  let return_string = Array.from(string)
+function kmp_search_word(string) {
+  let isBanned = false
   banned.forEach(function(word) {
     let j = 0
     let k = 0
@@ -40,26 +40,19 @@ function kmp_search(string) {
         k += 1
         j += 1
         if (k == word.length) {
-        	ret.push(j - k)
-            k = T[k]
+          isBanned = true
+          break
         }
       } else {
         k = T[k]
         if (k < 0) {
         	j += 1
-            k += 1
+          k += 1
         }
       }
     }
-    if (ret.length > 0) {
-      ret.forEach(function(start_index) {
-        for (i = start_index; i < (start_index + word.length); i++) {
-          return_string[i] = "*"
-        }
-      })
-    }
   })
-  return return_string.join("")
+  return isBanned
 }
 
 // console.log(kmp_search("hahafuckhaha"))
