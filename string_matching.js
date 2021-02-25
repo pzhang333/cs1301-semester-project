@@ -28,18 +28,18 @@ function build_table_kmp(word) {
   return T;
 }
 
-function kmp_search_word(string) {
+function kmp_search_word(word) {
   let isBanned = false
-  banned.forEach(function(word) {
+  banned.forEach(function(bannedWord) {
     let j = 0
     let k = 0
-    const T = build_table_kmp(word)
+    const T = build_table_kmp(bannedWord)
     let ret = []
-    while (j < string.length) {
-      if (word[k] == string[j]) {
+    while (j < word.length) {
+      if (bannedWord[k] == word[j]) {
         k += 1
         j += 1
-        if (k == word.length) {
+        if (k == bannedWord.length) {
           isBanned = true
           break
         }
