@@ -1,11 +1,4 @@
-const banned = new Set(["fuck", "test", "trump"])
-
-function basic_matching(word) {
-  if (banned.has(word)) {
-    return true;
-  }
-  return false;
-}
+const bannedWordList = new Set(["test", "apple", "ban"]);
 
 function build_table_kmp(word) {
   let T = new Array(word.length + 1).fill(0);
@@ -30,11 +23,10 @@ function build_table_kmp(word) {
 
 function kmp_search_word(word) {
   let isBanned = false
-  banned.forEach(function(bannedWord) {
+  bannedWordList.forEach(function(bannedWord) {
     let j = 0
     let k = 0
     const T = build_table_kmp(bannedWord)
-    let ret = []
     while (j < word.length) {
       if (bannedWord[k] == word[j]) {
         k += 1
@@ -55,4 +47,14 @@ function kmp_search_word(word) {
   return isBanned
 }
 
-// console.log(kmp_search("hahafuckhaha"))
+exports.isBadMessage = function (message) {
+  const words = message.split(" ")
+
+  for (const word of words) {
+    if (bannedWordList.has(word) || kmp_search_word(word)) {
+      return true;
+    }
+  }
+
+  return false;
+}
