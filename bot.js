@@ -1,6 +1,6 @@
 const tmi = require('tmi.js'); // library for communicating with Twitch
-require('dotenv').config() // loading .env vars
-const filter = require('./filter.js') // loading our custom filter implementation
+require('dotenv').config(); // loading .env vars, needed for bot to connect to Twitch
+const Filter = require('./filter.js').Filter; // loading our custom filter class
 
 // log-in details
 const options = {
