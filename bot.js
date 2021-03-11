@@ -16,6 +16,9 @@ const options = {
 // creating bot
 const bot = new tmi.client(options);
 
+// creating filter
+const filter = new Filter();
+
 // creating handlers
 function messageHandler(target, context, msg, self) {
   // ignore all messages coming from the bot itself
@@ -23,7 +26,7 @@ function messageHandler(target, context, msg, self) {
     return;
   }
 
-  const badMessage = filter.isBadMessage(msg);
+  const badMessage = filter.shouldRemove(msg);
   if (badMessage) {
     const messageUUID = context.id;
     bot.deletemessage(target, messageUUID)

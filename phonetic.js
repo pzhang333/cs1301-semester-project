@@ -24,7 +24,7 @@ function phonetic_filter(query) {
     firstLetter = letters[0]
     letters = letters.slice(1)
     letters = letters.filter((char) => {
-      if (to_remove.has(char)) {
+      if (toRemove.has(char)) {
         return false
       }
       return true
