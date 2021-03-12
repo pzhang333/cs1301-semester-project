@@ -100,3 +100,5 @@ function phonetic_filter(query) {
   
     return letters.join('')
   }
+
+exports.phonetic_filter = phonetic_filter;
