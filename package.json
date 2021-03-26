@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
+    "double-metaphone": "^1.0.5",
     "tmi.js": "^1.7.1"
   }
 }

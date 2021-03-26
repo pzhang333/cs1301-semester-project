@@ -1,5 +1,5 @@
 const fs = require('fs');
-const pf = require('./phonetic')
+const doubleMetaphone = require('double-metaphone')
 
 class Filter {
   constructor() {
@@ -28,14 +28,18 @@ class Filter {
     for (const word of bannedWords) {
       this.valid.delete(word)
       this.banned.add(word)
-      this.phonetic.add(pf.phonetic_filter(word))
+
+      // double metaphone returns 2 phonetic translations
+      const phonetic = doubleMetaphone(word)
+      this.phonetic.add(phonetic[0])
+      this.phonetic.add(phonetic[1])
     }
   }
 
   getCanonical(word) {
     const canonicalWord = []
     for (const letter of word) {
-      if (letter in transform) {
+      if (letter in this.transform) {
         canonicalWord.push(this.transform[letter])
       } else {
         canonicalWord.push(letter)
@@ -48,24 +52,31 @@ class Filter {
     const unknownWords = new Set()
 
     // if a word appears in the valid list, we no longer consider it
+    // for (const word of message.split(' ')) {
+    //   if (!(this.valid.has(word) || this.valid.has(word.toLowerCase()))) {
+    //     unknownWords.add(word.toLowerCase()) // we only work with lower case
+    //   }
+    // }
+
+    // for easy demo purposes, we have an empty valid word list
     for (const word of message.split(' ')) {
-      if (!(this.valid.has(word) || this.valid.has(word.toLowerCase()))) {
-        unknownWords.add(word.toLowerCase()) // we only work with lower case
-      }
+      unknownWords.add(word.toLowerCase()) // we only work with lower case
     }
 
+    const canonicalWords = new Set()
     // converting words to canonical form
     for (const word of unknownWords) {
-      unknownWords.delete(word)
-      unknownWords.add(this.getCanonical(word))
+      canonicalWords.add(this.getCanonical(word))
     }
 
     // checking for word in banned words and in phonetic filter
-    for (const word of unknownWords) {
+    for (const word of canonicalWords) {
+      console.log(word)
       if (this.banned.has(word)) {
         return true
       }
-      if (this.phonetic.has(pf.phonetic_filter(word))) {
+      const phonetic = doubleMetaphone(word)
+      if (this.phonetic.has(phonetic[0]) || this.phonetic.has(phonetic[1])) {
         return true
       }
     }
