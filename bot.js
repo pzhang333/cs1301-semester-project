@@ -52,7 +52,7 @@ function messageHandler(target, context, msg, self) {
     userRanking[userID]["badMessageCount"]++
     userRanking[userID]["timestamp"] = parseInt(context['tmi-sent-ts'])
   } else {
-    if (timeSinceLastMessage >= 60 || newUser) {
+    if (timeSinceLastMessage >= 1 || newUser) {
       userRanking[userID]["goodMessageCount"]++
       userRanking[userID]["timestamp"] = parseInt(context['tmi-sent-ts'])
     }
