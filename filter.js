@@ -48,9 +48,9 @@ class Filter {
     return canonicalWord.join('')
   }
 
-  shouldRemove(message) {
+  shouldRemove(message, userRank) {
     const unknownWords = new Set()
-
+    console.log(userRank)
     // if a word appears in the valid list, we no longer consider it
     // for (const word of message.split(' ')) {
     //   if (!(this.valid.has(word) || this.valid.has(word.toLowerCase()))) {

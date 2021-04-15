@@ -19,14 +19,28 @@ const bot = new tmi.client(options);
 // creating filter
 const filter = new Filter();
 
+let userRanking = {}
 // creating handlers
 function messageHandler(target, context, msg, self) {
   // ignore all messages coming from the bot itself
   if (self) {
     return;
   }
-
-  const badMessage = filter.shouldRemove(msg);
+  const userID = context['user-id']
+  let newUser = false
+  if (!(userID in userRanking)) {
+    newUser = true
+    userRanking[userID] = {
+      "goodMessageCount": 0, 
+      "badMessageCount": 0, 
+      "timestamp": parseInt(context['tmi-sent-ts'])
+    }
+  }
+  // 0/0 in JS is NaN so for new users, have a rank of 0.
+  const userRank = userRanking[userID]["goodMessageCount"]/(userRanking[userID]["goodMessageCount"] + userRanking[userID]["badMessageCount"]) || 0
+  // time is stored in milliseconds
+  const timeSinceLastMessage = (userRanking[userID]["timestamp"] - parseInt(context['tmi-sent-ts']))/1000
+  const badMessage = filter.shouldRemove(msg, userRank);
   if (badMessage) {
     const messageUUID = context.id;
     bot.deletemessage(target, messageUUID)
@@ -35,6 +49,13 @@ function messageHandler(target, context, msg, self) {
     }).catch((err) => {
       console.log(err)
     });
+    userRanking[userID]["badMessageCount"]++
+    userRanking[userID]["timestamp"] = parseInt(context['tmi-sent-ts'])
+  } else {
+    if (timeSinceLastMessage >= 60 || newUser) {
+      userRanking[userID]["goodMessageCount"]++
+      userRanking[userID]["timestamp"] = parseInt(context['tmi-sent-ts'])
+    }
   }
 }
 
