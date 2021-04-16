@@ -49,7 +49,8 @@ function messageHandler(target, context, msg, self) {
     }).catch((err) => {
       console.log(err)
     });
-    userRanking[userID]["badMessageCount"]++
+    const totalMessages = userRanking[userID]["goodMessageCount"] + userRanking[userID]["badMessageCount"] + 1
+    userRanking[userID]["badMessageCount"] += (1 - (1 / totalMessages))
     userRanking[userID]["timestamp"] = parseInt(context['tmi-sent-ts'])
   } else {
     if (timeSinceLastMessage >= 1 || newUser) {
