@@ -3,9 +3,9 @@ const doubleMetaphone = require('double-metaphone')
 
 class Filter {
   constructor() {
-    this.valid = new Set()
     this.banned = new Set()
     this.phonetic = new Set()
+    this.valid = new Set()
     this.transform = {
       'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u', 'ý': 'y',
       'â': 'a', 'ê': 'e', 'î': 'i', 'ô': 'o', 'û': 'u',
@@ -16,23 +16,33 @@ class Filter {
       '&': 'a', '3': 'e', '1': 'l', '4': 'a', '7': 't', '0': 'o'
     }
 
-    const words = fs.readFileSync('./dictionary.txt', 'utf-8')
-      .split('\n')
-    for (const word of words) {
-      this.valid.add(word)
-      this.valid.add(word.toLowerCase())
-    }
-
-    const bannedWords = fs.readFileSync('./banned.txt', 'utf-8')
-      .split('\n')
+    // loading banned word list first
+    const bannedWords = fs.readFileSync('./banned.txt', 'utf-8').split('\n')
     for (const word of bannedWords) {
-      this.valid.delete(word)
+      // adding to banned word list
       this.banned.add(word)
 
       // double metaphone returns 2 phonetic translations
       const phonetic = doubleMetaphone(word)
       this.phonetic.add(phonetic[0])
       this.phonetic.add(phonetic[1])
+    }
+
+    // loading valid dictionary next
+    const words = fs.readFileSync('./dictionary.txt', 'utf-8').split('\n')
+    for (const word of words) {
+      if (this.banned.has(word) || this.banned.has(word.toLocaleLowerCase())) {
+        // in banned list so we should ignore this word
+        continue
+      }
+
+      const phonetic = doubleMetaphone(word.toLocaleLowerCase())
+      if (this.phonetic.has(phonetic[0]) || this.phonetic.has(phonetic[1])) {
+        // in banned phonetic list so we should ignore this word
+        continue
+      }
+
+      this.valid.add(word.toLocaleLowerCase())
     }
   }
 
@@ -50,16 +60,13 @@ class Filter {
 
   shouldRemove(message, userRank) {
     const unknownWords = new Set()
+
     // if a word appears in the valid list, we no longer consider it
     for (const word of message.split(' ')) {
-      if (!(this.valid.has(word) || this.valid.has(word.toLowerCase()))) {
-        unknownWords.add(word.toLowerCase()) // we only work with lower case
+      const lowercaseWord = word.toLocaleLowerCase()
+      if (!(this.valid.has(lowercaseWord))) {
+        unknownWords.add(lowercaseWord)
       }
-    }
-
-    // for easy demo purposes, we have an empty valid word list
-    for (const word of message.split(' ')) {
-      unknownWords.add(word.toLowerCase()) // we only work with lower case
     }
 
     const canonicalWords = new Set()
@@ -70,7 +77,6 @@ class Filter {
 
     // checking for word in banned words and in phonetic filter
     for (const word of canonicalWords) {
-      console.log(word)
       if (this.banned.has(word)) {
         return true
       }
@@ -80,7 +86,7 @@ class Filter {
       }
     }
 
-    if (userRank <= 0.5) {
+    if (userRank < 0.5) {
       return true
     } else {
       return false
