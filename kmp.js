@@ -19,13 +19,12 @@ function build_table_kmp(word) {
     return T;
   }
   
-function kmp_search_word(word) {
-let isBanned = false
-bannedWordList.forEach(function(bannedWord) {
-    let j = 0
-    let k = 0
-    const T = build_table_kmp(bannedWord)
-    while (j < word.length) {
+function kmp_search_word(bannedWord, word) {
+  let isBanned = false
+  let j = 0
+  let k = 0
+  const T = build_table_kmp(bannedWord)
+  while (j < word.length) {
     if (bannedWord[k] == word[j]) {
         k += 1
         j += 1
@@ -40,7 +39,6 @@ bannedWordList.forEach(function(bannedWord) {
         k += 1
         }
     }
-    }
-})
-return isBanned
+  }
+  return isBanned
 }
