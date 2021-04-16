@@ -42,3 +42,7 @@ function kmp_search_word(bannedWord, word) {
   }
   return isBanned
 }
+
+module.exports = {
+  kmp: kmp_search_word
+}

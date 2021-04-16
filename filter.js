@@ -1,5 +1,6 @@
 const fs = require('fs');
 const doubleMetaphone = require('double-metaphone')
+const kmp = require('./kmp.js').kmp;
 
 class Filter {
   constructor() {
@@ -84,6 +85,19 @@ class Filter {
       if (this.phonetic.has(phonetic[0]) || this.phonetic.has(phonetic[1])) {
         return true
       }
+    }
+
+    // checking substrings
+    for (const word of canonicalWords) {
+      for (const badWord of this.banned) {
+        if (kmp(badWord, word)) {
+          return true
+        }
+      }
+    }
+
+    if (unknownWords.size == 0) {
+      return false
     }
 
     if (userRank < 0.5) {
