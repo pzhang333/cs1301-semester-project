@@ -51,11 +51,11 @@ class Filter {
   shouldRemove(message, userRank) {
     const unknownWords = new Set()
     // if a word appears in the valid list, we no longer consider it
-    // for (const word of message.split(' ')) {
-    //   if (!(this.valid.has(word) || this.valid.has(word.toLowerCase()))) {
-    //     unknownWords.add(word.toLowerCase()) // we only work with lower case
-    //   }
-    // }
+    for (const word of message.split(' ')) {
+      if (!(this.valid.has(word) || this.valid.has(word.toLowerCase()))) {
+        unknownWords.add(word.toLowerCase()) // we only work with lower case
+      }
+    }
 
     // for easy demo purposes, we have an empty valid word list
     for (const word of message.split(' ')) {
